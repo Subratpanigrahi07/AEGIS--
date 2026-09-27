@@ -16,6 +16,24 @@ I've structured the project according to the 12 sections in your Hacktopia templ
 
 The design combines the most relevant architectural ideas from the repositories we discussed: multi-agent security operations, federated learning, decentralized threat intelligence, on-chain trust and challenge mechanisms, controlled response authorization, and tamper-evident auditing. These are proposed as an integrated system; the complete AEGIS-Ω platform itself is not an existing, validated implementation.
 
+> **Project stage: proposed research prototype.** The original project description is preserved in full. Expanded architecture and validation sections describe a proposed implementation; no deployment or benchmark results are claimed.
+
+## Explore the project
+
+| Understand the idea | Inspect the design | Plan the implementation |
+| --- | --- | --- |
+| [Project identity](#section-01) | [Proposed solution](#section-04) | [Technology stack](#section-07) |
+| [Problem understanding](#section-02) | [Innovation](#section-05) | [Implementation plan](#section-10) |
+| [Existing challenges](#section-03) | [End-to-end workflow](#section-06) | [Impact and evaluation](#section-11) |
+| [Key features](#section-09) | [System architecture](#section-08) | [Future scope](#section-12) |
+| [Project abstract](#project-abstract) | [Detailed architecture diagrams](#detailed-architecture) | [Demonstration blueprint](#demonstration-blueprint) |
+
+**Architecture reading path:** deployment boundaries → component contracts → incident sequence → report lifecycle → data placement → learning and model promotion → response authorization → implementation decisions.
+
+---
+
+<a id="section-01"></a>
+
 ## 01. Project identity
 
 #### PROJECT NAME
@@ -33,6 +51,8 @@ Development of a Decentralized Self-Evolving Cyber Defense Ecosystem Using Multi
 - College / Institution: [Enter Institution]
 
 - Team members: [Enter Member Names]
+
+<a id="section-02"></a>
 
 ## 02. Problem understanding
 
@@ -95,6 +115,8 @@ AEGIS-Ω aims to shift cybersecurity from isolated, reactive protection toward c
 ### 2.4 Supporting data / statistics
 
 For the submission, this section should use verified and dated cybersecurity statistics relevant to the target population. No numerical statistic is inserted here because the template's extracted content does not provide one and no independently verified statistic is being used in this draft.
+
+<a id="section-03"></a>
 
 ## 03. Existing challenges / problem gap
 
@@ -168,6 +190,8 @@ AEGIS-Ω targets this gap by combining:
 - Policy-controlled defensive actions.
 
 - Continuous learning from verified outcomes.
+
+<a id="section-04"></a>
 
 ## 04. Proposed solution
 
@@ -301,6 +325,8 @@ Every proposed update passes through validation, testing, versioning, and rollba
 | Compromised participants | Trust evaluation and adversarial update screening | Reduced influence of malicious contributions |
 | Uncontrolled automation | Authorization policies and human oversight | Safer defensive execution |
 
+<a id="section-05"></a>
+
 ## 05. Innovation and unique value proposition
 
 ### 5.1 Key innovation
@@ -354,6 +380,8 @@ AEGIS-Ω transforms isolated security operations into a collaborative, verifiabl
 Its value lies in enabling organizations to benefit from collective threat intelligence and collaborative learning while maintaining control over sensitive data, preserving accountability, and limiting the influence of malicious participants.
 
 The proposed platform aims to help security teams improve threat visibility, investigate incidents more consistently, validate shared intelligence, and respond through controlled, evidence-based workflows.
+
+<a id="section-06"></a>
 
 ## 06. How the solution works — End-to-end workflow
 
@@ -420,6 +448,8 @@ Consider three participating organizations: a hospital, a financial institution,
 - The incident outcomes are recorded, and validated feedback is used to improve future detection and response.
 
 This scenario illustrates the intended collaboration model. It does not assume that one organization's threat report automatically proves that another organization is compromised.
+
+<a id="section-07"></a>
 
 ## 07. Technology stack
 
@@ -500,6 +530,8 @@ The following stack is proposed for a practical prototype. The technologies are 
 No specialized hardware is required for the initial prototype.
 
 The system can run on ordinary computers or virtual machines, with simulated enterprise networks and containerized endpoints. Later versions may integrate endpoint monitoring agents, network sensors, or industrial IoT devices.
+
+<a id="section-08"></a>
 
 ## 08. System architecture
 
@@ -631,6 +663,234 @@ The proposed network uses a permissioned consortium model in which participating
 
 A permissioned blockchain is proposed because the initial system requires known participants, controlled access, and organizational accountability. The specific consensus protocol and fault tolerance must be selected and tested during implementation.
 
+<a id="detailed-architecture"></a>
+
+### 8.5 Detailed deployment architecture
+
+> **Proposed design elaboration:** Sections 8.5–8.12 expand the original architecture into an implementation blueprint. They describe intended behavior and design decisions to validate; they do not represent an implemented or benchmarked platform.
+
+The deployment separates organization-owned processing from consortium coordination. Each organization operates the same local node pattern, retains its raw telemetry, and decides which derived information may leave its boundary. Shared services coordinate approved contributions; they do not receive unrestricted access to local evidence or response tools.
+
+```mermaid
+flowchart TB
+    subgraph LOCAL["Organization A — local trust boundary"]
+        TELE["Authorized telemetry"] --> ING["Collection and normalization"]
+        ING --> DET["Local detection engine"]
+        ING --> STORE["Local event and evidence stores"]
+        DET --> AG["Multi-agent investigation"]
+        STORE --> AG
+        AG --> OUT["Report review, minimization and signing"]
+        STORE --> TRAIN["Local model training"]
+        RESP["Local response policy and authorization"] --> EXEC["Sandboxed defensive action"]
+        EXEC --> FEED["Outcome measurement"]
+        FEED --> STORE
+    end
+    subgraph PEERS["Other organization boundaries"]
+        B["Organization B — equivalent local node"]
+        C["Organization C — equivalent local node"]
+    end
+    subgraph SHARED["Permissioned consortium services"]
+        GATE["Authenticated intelligence gateway"] --> VAL["Independent evidence validation"]
+        VAL --> DIST["Approved intelligence distribution"]
+        VAL --> LEDGER["Identity, provenance and audit ledger"]
+        FL["Federated round coordinator"] --> SCREEN["Update validation and aggregation"]
+        SCREEN --> EVAL["Candidate model evaluation"]
+        EVAL --> REG["Versioned model registry"]
+        REG --> LEDGER
+    end
+    OUT -->|"Signed, minimized report"| GATE
+    B <-->|"Approved reports and validation"| GATE
+    C <-->|"Approved reports and validation"| GATE
+    DIST -->|"Validated intelligence"| RESP
+    TRAIN -->|"Authorized model update"| FL
+    B <-->|"Federated participation"| FL
+    C <-->|"Federated participation"| FL
+    REG -->|"Candidate model for local acceptance"| DET
+    RESP -->|"Decision and outcome references"| LEDGER
+```
+
+**Reading the architecture:** detection and response remain local. Cross-organization messages pass through an authenticated, policy-controlled interface. The consortium ledger records accountable decisions and references; evidence storage, model training, inference, and defensive execution remain separate services.
+
+The federated coordinator is a designated service in the initial prototype. This is a coordination dependency to document and test. A permissioned ledger alone does not make every component decentralized or remove coordinator availability and governance risks.
+
+### 8.6 Component responsibilities and contracts
+
+| Component | Receives | Produces | Required boundary |
+| --- | --- | --- | --- |
+| Telemetry collector | Authorized logs, events and network metadata | Normalized events with source and time information | Local access policies determine collection and retention |
+| Detection engine | Normalized local events and approved model version | Alert, confidence, evidence references and model version | A detection is a hypothesis requiring investigation |
+| Investigation orchestrator | Alert and permitted evidence | Agent tasks and a consolidated assessment | Enforces task limits and preserves contradictory findings |
+| Verification Agent | Claims, provenance and evidence references | Supported, unsupported or unresolved findings | Source identity does not substitute for evidence |
+| Report gateway | Minimized signed report | Submission acknowledgment or validation error | Checks identity, schema, authorization, freshness and duplication |
+| Consortium validators | Shared report and accessible evidence | Independent validation decisions and reasons | Restricted evidence cannot be assumed verified |
+| Trust registry | Authorized decisions and dispute outcomes | Versioned provenance and reputation history | Reputation informs review; it cannot bypass response policy |
+| Learning coordinator | Round membership and approved updates | Candidate aggregation and round metadata | Rejects incompatible, replayed or unauthorized contributions |
+| Model registry | Evaluated model artifact and approvals | Versioned candidate or approved release | Local deployment requires an explicit acceptance gate |
+| Response engine | Validated assessment and local policy | Approved action request or escalation | Only allowlisted actions against authorized local targets |
+| Outcome evaluator | Post-action observations and reviewed labels | Measured outcome and candidate feedback | Unreviewed agent opinions do not become trusted training labels |
+| Dashboard | Authorized incident, model and audit views | Analyst reviews and approval requests | The backend independently enforces every permission |
+
+### 8.7 End-to-end incident sequence
+
+```mermaid
+sequenceDiagram
+    autonumber
+    participant N as Local node
+    participant A as Investigation agents
+    participant G as Intelligence gateway
+    participant V as Independent validators
+    participant L as Consortium ledger
+    participant P as Peer organization
+    participant H as Authorized reviewer
+    N->>A: Alert, model version and scoped evidence
+    A->>A: Enrich, correlate, verify and assess risk
+    A-->>N: Structured assessment with uncertainty
+    N->>N: Minimize disclosure and sign report
+    N->>G: Submit authenticated threat report
+    G->>G: Check schema, identity, freshness and replay
+    G->>V: Request independent corroboration
+    V-->>G: Evidence-linked decisions
+    alt Validation policy satisfied
+        G->>L: Record validation and provenance references
+        G->>P: Distribute validated intelligence
+        P->>P: Reassess local evidence and response policy
+        opt Action requires human authorization
+            P->>H: Proposed target, action, evidence and rollback
+            H-->>P: Approve or reject scoped action
+        end
+        P->>P: Execute only if authorized; measure outcome
+        P->>L: Record decision and outcome references
+    else Conflicting or insufficient evidence
+        G->>L: Record disputed or unresolved status
+        G-->>N: Request further evidence or issue rejection
+    end
+```
+
+A peer organization receives intelligence, not an instruction to execute a command. It must correlate the report with its own environment and apply its own authorization policy. The outcome of validation and the authority to act are separate decisions.
+
+### 8.8 Threat report lifecycle
+
+```mermaid
+stateDiagram-v2
+    [*] --> Draft
+    Draft --> Submitted: Disclosure review and signature
+    Submitted --> Rejected: Identity, schema or replay check fails
+    Submitted --> UnderReview: Admission checks pass
+    UnderReview --> Validated: Evidence policy satisfied
+    UnderReview --> Disputed: Conflicting evidence
+    UnderReview --> Unresolved: Insufficient evidence or timeout
+    Disputed --> UnderReview: Additional evidence accepted
+    Unresolved --> UnderReview: New evidence available
+    UnderReview --> Rejected: Claim unsupported
+    Validated --> Revoked: Approved correction or adverse evidence
+    Validated --> Expired: Validity window ends
+    Rejected --> [*]
+    Revoked --> [*]
+    Expired --> [*]
+```
+
+Validation is time-sensitive. An indicator accepted during one incident should not remain indefinitely actionable. Expiry, correction and revocation events should propagate to consumers, while the earlier decision history remains available for audit. Downstream nodes should record which report version supported each response.
+
+**Proposed report contract:** the following fields define a design target, not a published API.
+
+| Field group | Proposed fields | Purpose |
+| --- | --- | --- |
+| Identity | `report_id`, `schema_version`, `organization_id`, `signing_key_id` | Identify the submission, format and accountable source |
+| Timing | `observed_at`, `submitted_at`, `expires_at` | Evaluate ordering, freshness and useful lifetime |
+| Threat description | `indicator_type`, `indicator_value`, `observed_behavior` | Describe the claim without exporting full telemetry |
+| Assessment | `confidence`, `severity`, `uncertainty`, `model_version` | Preserve the assessment and the basis on which it was generated |
+| Evidence | `evidence_refs`, `evidence_hashes`, `disclosure_policy` | Link authorized reviewers to integrity-checkable evidence |
+| Integrity | `payload_hash`, `signature`, `nonce` | Bind the source to a defined payload and support replay checks |
+| Lifecycle | `status`, `validation_refs`, `supersedes_report_id` | Track review, correction and downstream dependencies |
+
+Before implementation, specify canonical serialization, the exact signed fields, signature algorithms, clock tolerance, identifier rules and schema evolution. Confidence values also need a defined interpretation; values from different models should not be treated as directly comparable without calibration.
+
+### 8.9 Data placement and disclosure controls
+
+| Data | Intended location | Sharing rule |
+| --- | --- | --- |
+| Raw logs and network telemetry | Originating organization's local event store | Remain local under the original design |
+| Detailed investigation evidence | Local encrypted evidence storage | Access only when explicitly permitted; a reference does not grant access |
+| Sanitized threat report | Authorized intelligence service and permitted peers | Minimize identifying or sensitive fields before submission |
+| Report hash and validation reference | Consortium ledger | Commit only metadata approved for consortium visibility |
+| Model update | Authorized learning workflow | Screen and protect according to the chosen round protocol |
+| Model artifact | Versioned model registry | Distribute only approved versions to authorized participants |
+| Response decision | Local audit record with selected ledger references | Preserve actor, policy, target and supporting report version |
+| Secrets and signing keys | Organization-controlled secret storage | Never publish in reports, prompts, model metadata or ledger records |
+
+Hashes do not make their underlying inputs anonymous. Short or guessable indicators can remain discoverable, and participant identities, timestamps or repeated references may disclose relationships. The implementation should review metadata exposure as well as raw data exposure.
+
+Retention, deletion and correction policies belong at the data-owning organization and consortium governance levels. Sensitive content should not be written into an immutable record on the assumption that it can be removed later.
+
+### 8.10 Federated learning and controlled self-evolution
+
+```mermaid
+flowchart LR
+    BASE["Approved model version"] --> LOCAL["Local training on authorized data"]
+    LOCAL --> CHECK["Identity, round and update checks"]
+    CHECK --> AGG["Chosen aggregation protocol"]
+    AGG --> CAND["Candidate global model"]
+    CAND --> TEST["Held-out and adversarial evaluation"]
+    TEST --> GATE{"Acceptance policy met?"}
+    GATE -->|"No"| REJ["Reject candidate and retain baseline"]
+    GATE -->|"Yes"| APPROVE["Required approval and version registration"]
+    APPROVE --> CANARY["Limited local deployment"]
+    CANARY --> MON["Monitor operational results"]
+    MON -->|"Accepted"| BASE
+    MON -->|"Regression"| ROLL["Restore previous approved version"]
+    ROLL --> BASE
+```
+
+**A learning round should be reproducible.** Record the starting model, eligible participants, dataset split policy, training configuration, update checks, aggregation method, evaluation results, approval and final artifact hash. A failed or incomplete round should leave the last approved model available.
+
+**Resolve the privacy–inspection tradeoff explicitly.** Individual-update anomaly screening requires visibility into individual updates. Secure aggregation can intentionally hide those updates from the coordinator. The implementation must choose a compatible protocol rather than assume unrestricted screening and hidden individual updates can be combined automatically. An initial experiment may evaluate transparent screened aggregation and a separate secure-aggregation configuration, documenting the distinct trust assumptions of each.
+
+**Feedback requires provenance.** Separate analyst-confirmed labels, controlled test labels and unconfirmed model predictions. Only feedback satisfying the chosen validation policy should influence released models or response policies. This avoids treating repeated agreement between agents as independent proof.
+
+**Promotion requires measured evidence.** Compare candidate models against the same approved baseline using held-out evaluation data and defined operating conditions. Include false positives, detection quality, resource use and performance under malicious contributions. Acceptance thresholds should be declared before the experiment; no numerical target is claimed as achieved in this document.
+
+### 8.11 Response authorization and operational recovery
+
+| Proposed action category | Example | Authorization gate | Recovery requirement |
+| --- | --- | --- | --- |
+| Observation | Raise an incident or increase approved monitoring | Local policy and permitted telemetry scope | Expire temporary monitoring and record closure |
+| Reversible containment in a sandbox | Quarantine a simulated endpoint | Valid evidence, allowlisted target and policy approval | Defined release operation and bounded duration |
+| Disruptive containment | Restrict an account or block a workload | Explicit approval from an authorized reviewer when impact requires it | Capture the prior state and verify restoration |
+| Model or policy deployment | Promote a candidate detection model | Evaluation, versioning and required release approval | Retain the previous approved version and test rollback |
+
+An action request should bind the action type, target, parameters, evidence references, policy version, approval identity and expiry. Approval for one target or action must not authorize a broader action after the request changes. Repeated delivery should not execute the same action more than once.
+
+| Failure or adversarial condition | Intended behavior |
+| --- | --- |
+| Shared ledger unavailable | Continue permitted local monitoring; defer actions requiring unavailable consortium authorization and record reconciliation work |
+| Contradictory agent findings | Preserve disagreement, lower certainty where appropriate and request further review |
+| Compromised participant identity | Suspend new contributions under governance policy, review affected reports and rotate credentials |
+| Validator timeout | Mark the report unresolved; do not silently interpret missing decisions as approval |
+| Duplicate or replayed report | Detect prior submission or reused freshness material and avoid repeated downstream effects |
+| Poisoned or incompatible update | Reject or quarantine it; retain the current approved model |
+| Response execution timeout | Reconcile the actual target state before retrying or declaring success |
+| Candidate model regression | Stop promotion or restore the prior version; retain the failed candidate's evaluation record |
+
+Local protection must have a documented fallback policy. Any permitted action during a consortium outage should derive from existing local authorization, not from pretending that a missing shared decision succeeded.
+
+### 8.12 Implementation scope and architecture decisions
+
+| Design area | Initial prototype decision | Later validation or extension |
+| --- | --- | --- |
+| Participants | Three simulated organizations with distinct identities and data stores | Onboarding, removal and governance across independent operators |
+| Deployment | Containerized services on a controlled development environment | Operational isolation, service availability and deployment hardening |
+| Agent workflow | Bounded tasks, structured outputs and evidence references | Reliability studies, prompt-injection resistance and broader tooling |
+| Shared trust | Permissioned report lifecycle and audit registry | Endorsement design, fault tolerance and dispute governance |
+| Learning | Reproducible local-only and collaborative baselines | Stronger privacy protocols and adversarial robustness experiments |
+| Response | Allowlisted sandbox actions with visible authorization | Integration with real response tools after validation |
+| Evolution | Versioned candidate updates with promotion and rollback | More advanced adaptation after measurable baseline success |
+
+Untrusted telemetry, reports and retrieved intelligence should be passed to agents as evidence, not as instructions. Tool permissions must be enforced by the application even if an agent recommends an unauthorized action. The prototype should demonstrate this boundary with an injected instruction inside a test report.
+
+Outstanding decisions include validator eligibility and quorum, ledger endorsement policy, trust-score calculation, evidence disclosure rules, aggregation protocol, update clipping and rejection thresholds, model acceptance criteria, and response approval roles. These must be configured and evaluated before stronger reliability or security claims are made.
+
+<a id="section-09"></a>
+
 ## 09. Key features
 
 ### Feature 1 — Multi-Agent Autonomous Threat Investigation
@@ -680,6 +940,8 @@ The system evaluates incident outcomes and uses validated feedback to improve de
 Model versions, policy changes, approvals, and relevant outcomes are recorded in a tamper-evident audit trail, with rollback available for updates that fail validation.
 
 **Value:** Enables controlled continuous improvement while preserving accountability, reproducibility, and the ability to reverse unsuccessful changes.
+
+<a id="section-10"></a>
 
 ## 10. Technical feasibility & implementation plan
 
@@ -797,6 +1059,8 @@ Run the complete scenario, validate audit records, measure baseline results, fix
 
 These are proposed planning estimates, not verified development commitments.
 
+<a id="section-11"></a>
+
 ## 11. Impact & scalability
 
 ### 11.1 Target users
@@ -886,6 +1150,8 @@ Potential adopters include enterprise cybersecurity teams, managed security serv
 
 Adoption would depend on integration with existing security tools, compatibility with organizational policies, demonstrable privacy protections, governance agreements, and evidence that the platform provides measurable operational value.
 
+<a id="section-12"></a>
+
 ## 12. Conclusion & future scope
 
 ### 12.1 Key takeaway
@@ -933,6 +1199,107 @@ AEGIS-Ω aims to establish a foundation for collaborative cybersecurity in which
 If validated through rigorous testing, the platform could support more accountable threat intelligence sharing, privacy-conscious collaborative learning, and coordinated incident response across interconnected digital ecosystems.
 
 Its long-term objective is to make cybersecurity more collaborative, adaptive, and resilient while preserving organizational autonomy and human oversight.
+
+<a id="demonstration-blueprint"></a>
+
+## 13. Demonstration and validation blueprint
+
+> **Proposed implementation detail:** this section turns the project vision into a reviewable demonstration and evaluation plan. The scenarios below are acceptance criteria, not reported results.
+
+### 13.1 A coherent end-to-end demonstration
+
+The demonstration should follow one incident through the complete system and then show how the same system handles a malicious contribution. This makes the integration visible: an alert becomes evidence-linked intelligence, intelligence informs an authorized local action, and the measured outcome feeds a controlled update.
+
+| Stage | Demonstration event | Evidence to show |
+| --- | --- | --- |
+| 1. Establish the baseline | Start three organization nodes with distinct telemetry and identities | Node health, approved model version and participant registry |
+| 2. Detect locally | Replay a labeled suspicious event at Organization A | Alert timestamp, detector output and local evidence reference |
+| 3. Investigate | Run enrichment, correlation, verification and risk assessment | Structured agent findings, uncertainty and evidence links |
+| 4. Share selectively | Sign and submit a minimized report | Shared payload compared with retained local evidence |
+| 5. Corroborate | Organizations B and C evaluate permitted evidence | Validator identities, independent decisions and lifecycle state |
+| 6. Authorize a response | A peer correlates the report with its own test workload | Local policy decision, scope and any required human approval |
+| 7. Execute and measure | Apply an allowlisted sandbox action | Actual target state, execution receipt and outcome measurement |
+| 8. Challenge bad intelligence | Submit an intentionally unsupported report from a test participant | Disputed or rejected state and absence of unauthorized action |
+| 9. Evaluate learning | Run a collaborative round with a controlled malicious update | Baseline comparison, update disposition and candidate model result |
+| 10. Demonstrate rollback | Reject or reverse a deliberately unsuitable candidate release | Restored model version, audit record and continued local detection |
+
+### 13.2 Experiments that support credible claims
+
+| Research question | Comparison | Measurements | Interpretation requirement |
+| --- | --- | --- | --- |
+| Does collaboration improve detection? | Local-only model versus collaborative model | Precision, recall, false positive rate and per-node performance | Use consistent splits and prevent related records leaking across training and test sets |
+| Does validation resist false reports? | Direct acceptance versus the proposed validation workflow | False acceptance, valid-report rejection and validation latency | Include uncertain evidence, honest errors and deliberate manipulation |
+| Does update screening help? | Aggregation with and without the chosen defense | Detection degradation, rejection behavior and clean-data performance | State malicious participant fraction and attack assumptions |
+| Does agent specialization help? | A simpler investigation workflow versus specialized agents | Evidence correctness, completeness, time and disagreement handling | Judge against labeled scenarios rather than fluent explanations |
+| Is response controlled? | Authorized, unauthorized, expired and changed action requests | Correct approval enforcement, duplicate suppression and recovery | Check the actual target state as well as the audit entry |
+| What does shared coordination cost? | Local operation versus full consortium workflow | End-to-end latency, network traffic, storage and resource consumption | Record hardware, participant count and workload |
+
+Report run counts, variability, dataset versions, class balance and operating thresholds. A favorable aggregate score should not hide poor performance for one participating organization. Label simulated results clearly and keep reproducible experiment configurations with the implementation.
+
+### 13.3 Dashboard information architecture
+
+| View | Primary question | Proposed content |
+| --- | --- | --- |
+| Overview | What requires attention? | Open incidents, pending approvals, node health and active model versions |
+| Incident detail | What happened and what supports the claim? | Timeline, local evidence, agent findings, uncertainty and related reports |
+| Intelligence registry | Can this report be used? | Source, signature status, validation history, expiry and disputes |
+| Investigation trace | How was the assessment reached? | Assigned tasks, evidence references, conflicting findings and final assessment |
+| Response approvals | What exactly am I authorizing? | Action, target, operational impact, expiry and recovery procedure |
+| Learning rounds | Should this model be released? | Participant eligibility, update disposition, evaluation and version comparison |
+| Audit history | Who changed what, and why? | Actor, event time, object version, policy and integrity references |
+
+The interface should distinguish a detection from a validated threat, a recommended action from an executed action, and a candidate model from an approved model. Every success indicator should correspond to recorded evidence rather than merely a submitted request.
+
+### 13.4 Suggested repository organization
+
+This is a proposed layout for a future implementation. The README does not assert that these files or services already exist.
+
+```text
+aegis-omega/
+├── apps/
+│   └── dashboard/              # Analyst views and approval interface
+├── services/
+│   ├── local-node/             # Telemetry, detection and local evidence
+│   ├── investigation/         # Agent orchestration and structured findings
+│   ├── intelligence-gateway/   # Signed report admission and distribution
+│   ├── validation/             # Corroboration and report lifecycle
+│   ├── learning/               # Training rounds and candidate evaluation
+│   ├── response/               # Policy checks and sandbox execution
+│   └── audit/                  # Event references and reconciliation
+├── contracts/
+│   └── trust-registry/         # Proposed ledger logic and lifecycle rules
+├── schemas/                    # Versioned report, action and model contracts
+├── policies/                   # Disclosure, validation and response policies
+├── experiments/                # Baselines and reproducible evaluations
+├── tests/                      # Integration, failure and adversarial scenarios
+├── deployments/                # Development topology and organization profiles
+├── docs/                       # Architecture decisions and operating guides
+└── README.md
+```
+
+Installation commands, environment variables, endpoint URLs, licenses and benchmark badges should be added when an actual repository establishes them. Inventing executable setup instructions would make this proposal appear more complete than the available evidence supports.
+
+### 13.5 Prototype completion criteria
+
+- [ ] Three independent simulated organizations can exchange authenticated messages.
+- [ ] Each node retains its raw telemetry and exposes only authorized derived information.
+- [ ] An incident can be traced from detection through investigation and validation.
+- [ ] Invalid identities, replayed submissions and unsupported intelligence are handled explicitly.
+- [ ] No agent can bypass the application's response authorization controls.
+- [ ] At least one valid sandbox action and one denied action are demonstrated.
+- [ ] A learning round produces an evaluated candidate with a reproducible baseline comparison.
+- [ ] A malicious contribution scenario records both the intervention and its measured effect.
+- [ ] A failed model promotion leaves or restores the previous approved model.
+- [ ] Audit records connect report versions, approvals, actions and outcomes.
+- [ ] The final presentation distinguishes implemented behavior, experimental results and future scope.
+
+### 13.6 Reference context
+
+The [shared project discussion](https://chatgpt.com/share/6ab92284-4360-83ee-b2ee-e2aa68c4d37a) establishes the request for an advanced blockchain and cybersecurity project, repository-based inspiration, and a detailed template-aligned description. Its assistant responses and repository recommendations were not accessible when preparing this edition. No repository ranking, implementation claim or repository-specific attribution has therefore been inferred from that discussion.
+
+The uploaded project description remains the substantive source for the original 12 sections and final abstract. The additional architecture and demonstration sections are proposed elaborations of that source.
+
+<a id="project-abstract"></a>
 
 ## Final abstract — Submission-ready
 
